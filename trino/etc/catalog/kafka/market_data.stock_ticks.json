@@ -1,0 +1,25 @@
+{
+    "tableName": "stock_ticks",
+    "schemaName": "market_data",
+    "topicName": "market_data.stock_ticks",
+    "key": {
+        "dataFormat": "raw",
+        "fields": []
+    },
+    "message": {
+        "dataFormat": "json",
+        "fields": [
+            {"name": "source", "type": "VARCHAR", "mapping": "source"},
+            {"name": "symbol", "type": "VARCHAR", "mapping": "symbol"},
+            {"name": "ask", "type": "DOUBLE", "mapping": "ask"},
+            {"name": "bid", "type": "DOUBLE", "mapping": "bid"},
+            {"name": "mid", "type": "DOUBLE", "mapping": "mid"},
+            {"name": "askMarkup", "type": "DOUBLE", "mapping": "askMarkup"},
+            {"name": "bidMarkup", "type": "DOUBLE", "mapping": "bidMarkup"},
+            {"name": "isTradable", "type": "BOOLEAN", "mapping": "isTradable"},
+            {"name": "number", "type": "BIGINT", "mapping": "number"},
+            {"name": "dateTime", "type": "TIMESTAMP", "mapping": "dateTime", "dataFormat": "iso8601"},
+            {"name": "receiveDateTime", "type": "TIMESTAMP", "mapping": "receiveDateTime", "dataFormat": "iso8601"}
+        ]
+    }
+}

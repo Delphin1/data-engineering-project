@@ -1,0 +1,22 @@
+{
+    "tableName": "candle_5m",
+    "schemaName": "market_data",
+    "topicName": "market_data.candle_5m",
+    "key": {
+        "dataFormat": "raw",
+        "fields": []
+    },
+    "message": {
+        "dataFormat": "json",
+        "fields": [
+            {"name": "source", "type": "VARCHAR", "mapping": "source"},
+            {"name": "symbol", "type": "VARCHAR", "mapping": "symbol"},
+            {"name": "dateTime", "type": "TIMESTAMP", "mapping": "dateTime", "dataFormat": "iso8601"},
+            {"name": "open", "type": "DOUBLE", "mapping": "open"},
+            {"name": "high", "type": "DOUBLE", "mapping": "high"},
+            {"name": "low", "type": "DOUBLE", "mapping": "low"},
+            {"name": "close", "type": "DOUBLE", "mapping": "close"},
+            {"name": "volume", "type": "BIGINT", "mapping": "volume"}
+        ]
+    }
+}
