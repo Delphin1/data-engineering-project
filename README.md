@@ -76,16 +76,16 @@ For this we plan to use Trino.
 (you need 10Gb of RAM for Docker)  
 ~~1. Kafka - Redpanda (ext. ports: 8082,9092,9644,28082,29092)~~  
 ~~2. Redpanda UI (8084) [Redpanda UI](http://localhost:8084)~~
-3. Tick generator (Python app)
-4. Kafka + ksqlDB in confluent cloud
-5. S3 - Minio (9000)
-6. Minio UI (9001) [Minio UI](http://localhost:9001) (admin:password)
+3. Tick generator (Python app)  
+4. Kafka + ksqlDB in confluent cloud  
+5. S3 - Minio (9000)  
+6. Minio UI (9001) [Minio UI](http://localhost:9001) (admin:password)  
 7. Iceberg Rest Catalog (8181)
-8. Trino coordinator (8090) [Trino UI](http://localhost:8090) (any user)
-9. Prometheus (9090) - optional
-10. DBT + Trino plugin — optional for creating trino 
-11. BI - Grafana (3030) [Grafana UI](http://localhost:3030) (admin:admin)
-12. Airflow for execute queries (8080) (airflow:airflow)
+8. Trino coordinator (8090) [Trino UI](http://localhost:8090) (any user) 
+9. Prometheus (9090) - optional  
+10. DBT + Trino plugin — optional for creating trino  
+11. BI - Grafana (3030) [Grafana UI](http://localhost:3030) (admin:admin)  
+12. Airflow for execute queries (8080) (airflow:airflow)  
 
 ## Commands for reproducing the scenario 
 
@@ -107,8 +107,10 @@ terraform apply
 terraform output resource-ids
 #You need to catch `api_key_id`, `api_key_secret` and use it with generator as `KAFKA_SASL_USERNAME`, `KAFKA_SASL_PASSWORD` accordingly
 ```
-1.2. Up local infra in Docker compose (Trino, Airflow, Grafana, S3, REST Catalog) 
-- 
+1.2. Up local infra in Docker compose (Trino, Airflow, Grafana, S3, REST Catalog, etc) 
+```bash
+docker compose up -d
+```
 
 2. Start data generator
 ```bash
