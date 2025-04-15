@@ -75,7 +75,7 @@ For this we plan to use Trino.
 ## Sandbox components 
 (you need 10Gb of RAM for Docker)  
 ~~1. Kafka - Redpanda (ext. ports: 8082,9092,9644,28082,29092)~~  
-~~2. Redpanda UI (8084) [Redpanda UI](http://localhost:8084)~~
+~~2. Redpanda UI (8084) [Redpanda UI](http://localhost:8084)~~  
 3. Tick generator (Python app)  
 4. Kafka + ksqlDB in confluent cloud  
 5. S3 - Minio (9000)  
