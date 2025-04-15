@@ -1,0 +1,44 @@
+version: 2
+
+sources:
+  - name: kafka
+    database: kafka  # Каталог Trino
+    schema: default
+    tables:
+      - name: candle_1minute
+      - name: candle_10minute
+      - name: candle_1hour
+      - name: candle_1day
+      - name: stock_ticks
+
+
+models:
+  - name: candle_1minute_iceberg
+    config:
+      database: iceberg
+      schema: market_data
+      tags: ['5minute']
+
+  - name: candle_10minute_iceberg
+    config:
+      database: iceberg
+      schema: market_data
+      tags: ['5minute']
+
+  - name: candle_1hour_iceberg
+    config:
+      database: iceberg
+      schema: market_data
+      tags: ['5minute']
+
+  - name: candle_1day_iceberg
+    config:
+      database: iceberg
+      schema: market_data
+      tags: ['5minute']
+
+  - name: stock_ticks_iceberg
+    config:
+      database: iceberg
+      schema: market_data
+      tags: ['5minute']

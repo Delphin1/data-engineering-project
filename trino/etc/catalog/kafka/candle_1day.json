@@ -1,0 +1,24 @@
+{
+    "tableName": "candle_1day",
+    "topicName": "candle_1day",
+    "key": {
+        "dataFormat": "raw",
+        "fields": [
+            {"name": "kafka_key", "type": "VARCHAR"}
+        ]
+    },
+    "message": {
+        "dataFormat": "json",
+        "fields": [
+            {"name": "source", "type": "VARCHAR", "mapping": "SRC"},
+            {"name": "symbol", "type": "VARCHAR", "mapping": "SMB"},
+            {"name": "window_start_ts", "type": "TIMESTAMP", "mapping": "WINDOW_START_TS", "dataFormat": "iso8601"},
+            {"name": "window_end_ts", "type": "TIMESTAMP", "mapping": "WINDOW_END_TS", "dataFormat": "iso8601"},
+            {"name": "open", "type": "DOUBLE", "mapping": "OPEN"},
+            {"name": "high", "type": "DOUBLE", "mapping": "HIGH"},
+            {"name": "low", "type": "DOUBLE", "mapping": "LOW"},
+            {"name": "close", "type": "DOUBLE", "mapping": "CLOSE"},
+            {"name": "volume", "type": "BIGINT", "mapping": "VOLUME"}
+        ]
+    }
+}

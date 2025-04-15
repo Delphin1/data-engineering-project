@@ -1,0 +1,11 @@
+trino:
+  target: dev
+  outputs:
+    dev:
+      type: trino
+      method: none
+      user: admin
+      host: trino-coordinator
+      port: 8080
+      database: kafka
+      schema: default

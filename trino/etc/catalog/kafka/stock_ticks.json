@@ -1,7 +1,6 @@
 {
     "tableName": "stock_ticks",
-    "schemaName": "market_data",
-    "topicName": "market_data.stock_ticks",
+    "topicName": "stock_ticks",
     "key": {
         "dataFormat": "raw",
         "fields": []
@@ -17,7 +16,6 @@
             {"name": "askMarkup", "type": "DOUBLE", "mapping": "askMarkup"},
             {"name": "bidMarkup", "type": "DOUBLE", "mapping": "bidMarkup"},
             {"name": "isTradable", "type": "BOOLEAN", "mapping": "isTradable"},
-            {"name": "number", "type": "BIGINT", "mapping": "number"},
             {"name": "dateTime", "type": "TIMESTAMP", "mapping": "dateTime", "dataFormat": "iso8601"},
             {"name": "receiveDateTime", "type": "TIMESTAMP", "mapping": "receiveDateTime", "dataFormat": "iso8601"}
         ]

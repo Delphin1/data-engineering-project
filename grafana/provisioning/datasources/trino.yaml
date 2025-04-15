@@ -1,0 +1,17 @@
+apiVersion: 1
+
+datasources:
+  - name: Trino
+    type: trino-datasource
+    typeLogoUrl: /public/plugins/trino-datasource/img/logo.svg
+    orgId: 1
+    uid: a7a5b182-e5ca-4beb-b139-b1123193a5f1
+    access: proxy
+    url: http://trino-coordinator:8080
+    user: admin
+    database:
+    basicAuth: false
+    withCredentials: false
+    isDefault: true
+    jsonData:
+    editable: false

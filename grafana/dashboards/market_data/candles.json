@@ -1,0 +1,351 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": 1,
+  "links": [],
+  "liveNow": false,
+  "panels": [
+    {
+      "datasource": {
+        "type": "trino-datasource",
+        "uid": "a7a5b182-e5ca-4beb-b139-b1123193a5f1"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 23,
+        "x": 0,
+        "y": 0
+      },
+      "id": 2,
+      "options": {
+        "candleStyle": "candles",
+        "colorStrategy": "open-close",
+        "colors": {
+          "down": "red",
+          "up": "green"
+        },
+        "includeAllFields": false,
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "mode": "candles"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "trino-datasource",
+            "uid": "a7a5b182-e5ca-4beb-b139-b1123193a5f1"
+          },
+          "format": 0,
+          "rawSQL": "select\n    window_start_ts as time,\n    open,\n    high,\n    low,\n    close,\n    volume\n    from iceberg.market_data.candle_${Granularity}_iceberg\n    WHERE\n      source = '$Source'\n      and symbol = '$Symbol'\n      and $__timeFilter(window_start_ts)",
+          "refId": "A"
+        }
+      ],
+      "title": "Iceberg",
+      "type": "candlestick"
+    },
+    {
+      "datasource": {
+        "type": "trino-datasource",
+        "uid": "a7a5b182-e5ca-4beb-b139-b1123193a5f1"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 23,
+        "x": 0,
+        "y": 10
+      },
+      "id": 1,
+      "options": {
+        "candleStyle": "candles",
+        "colorStrategy": "open-close",
+        "colors": {
+          "down": "red",
+          "up": "green"
+        },
+        "includeAllFields": false,
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "mode": "candles"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "trino-datasource",
+            "uid": "a7a5b182-e5ca-4beb-b139-b1123193a5f1"
+          },
+          "format": 0,
+          "rawSQL": "\nWITH ranked_candles AS (\nselect\n    window_start_ts as time,\n    open,\n    high,\n    low,\n    close,\n    volume,\n    ROW_NUMBER() OVER (PARTITION BY SOURCE, SYMBOL, window_start_ts  ORDER BY _timestamp DESC) AS row_num\n    from kafka.default.candle_${Granularity}\n    WHERE\n      source = '$Source'\n      and symbol = '$Symbol'\n      and $__timeFilter(window_start_ts)\n)\nselect\n    time,\n    open,\n    high,\n    low,\n    close,\n    volume\nfrom ranked_candles\nwhere row_num = 1",
+          "refId": "A"
+        }
+      ],
+      "title": "Online",
+      "type": "candlestick"
+    }
+  ],
+  "refresh": false,
+  "schemaVersion": 38,
+  "tags": [],
+  "templating": {
+    "list": [
+      {
+        "current": {
+          "selected": true,
+          "text": "1minute",
+          "value": "1minute"
+        },
+        "hide": 0,
+        "includeAll": false,
+        "label": "Granularity",
+        "multi": false,
+        "name": "Granularity",
+        "options": [
+          {
+            "selected": true,
+            "text": "1minute",
+            "value": "1minute"
+          },
+          {
+            "selected": false,
+            "text": "10minute",
+            "value": "10minute"
+          },
+          {
+            "selected": false,
+            "text": "1hour",
+            "value": "1hour"
+          },
+          {
+            "selected": false,
+            "text": "1day",
+            "value": "1day"
+          }
+        ],
+        "query": "1minute, 10minute,1hour,1day",
+        "queryValue": "",
+        "skipUrlSync": false,
+        "type": "custom"
+      },
+      {
+        "current": {
+          "selected": true,
+          "text": "SOURCE_2",
+          "value": "SOURCE_2"
+        },
+        "hide": 0,
+        "includeAll": false,
+        "label": "Source",
+        "multi": false,
+        "name": "Source",
+        "options": [
+          {
+            "selected": false,
+            "text": "SOURCE_1",
+            "value": "SOURCE_1"
+          },
+          {
+            "selected": true,
+            "text": "SOURCE_2",
+            "value": "SOURCE_2"
+          },
+          {
+            "selected": false,
+            "text": "SOURCE_3",
+            "value": "SOURCE_3"
+          }
+        ],
+        "query": "SOURCE_1,SOURCE_2,SOURCE_3",
+        "queryValue": "",
+        "skipUrlSync": false,
+        "type": "custom"
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": "ETHUSD",
+          "value": "ETHUSD"
+        },
+        "hide": 1,
+        "includeAll": false,
+        "label": "Symbol",
+        "multi": false,
+        "name": "Symbol",
+        "options": [
+          {
+            "selected": false,
+            "text": "BTCUSD",
+            "value": "BTCUSD"
+          },
+          {
+            "selected": true,
+            "text": "ETHUSD",
+            "value": "ETHUSD"
+          },
+          {
+            "selected": false,
+            "text": "SOLUSD",
+            "value": "SOLUSD"
+          },
+          {
+            "selected": false,
+            "text": "XRPUSD",
+            "value": "XRPUSD"
+          },
+          {
+            "selected": false,
+            "text": "AVAXUSD",
+            "value": "AVAXUSD"
+          }
+        ],
+        "query": "BTCUSD,ETHUSD,SOLUSD,XRPUSD,AVAXUSD",
+        "queryValue": "",
+        "skipUrlSync": false,
+        "type": "custom"
+      }
+    ]
+  },
+  "time": {
+    "from": "2025-04-15T13:19:52.092Z",
+    "to": "2025-04-15T14:17:35.776Z"
+  },
+  "timepicker": {},
+  "timezone": "",
+  "title": "Candlesticks",
+  "uid": "b0c81156-3fb5-4dce-85ed-1e30b6f32009",
+  "version": 13,
+  "weekStart": ""
+}

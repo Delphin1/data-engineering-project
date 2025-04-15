@@ -8,16 +8,18 @@ import argparse
 import json
 import random
 import time
+import os
 from datetime import datetime, timezone, timedelta
 from typing import Dict, Any, List, Optional
 
 from faker import Faker
-from kafka import KafkaProducer
+# from kafka import KafkaProducer
+from confluent_kafka import Producer
 
 def parse_args():
     """Parse command line arguments"""
     parser = argparse.ArgumentParser(description='Generate fake ticks and send to Kafka')
-    parser.add_argument('--brokers', required=True, help='Kafka brokers (comma-separated)')
+    parser.add_argument('--bootstrap.servers', required=True, help='Kafka brokers (comma-separated)')
     parser.add_argument('--topic', required=True, help='Kafka topic to send ticks to')
     parser.add_argument('--interval', type=float, default=1.0,
                         help='Interval between ticks in seconds (default: 1.0)')
@@ -27,6 +29,8 @@ def parse_args():
                         help='Comma-separated list of trading symbols (default: BTCUSD,ETHUSD,SOLUSD,XRPUSD,AVAXUSD)')
     parser.add_argument('--sources', type=str, default="SOURCE_1,SOURCE_2,SOURCE_3",
                         help='Comma-separated list of data sources (default: SOURCE_1,SOURCE_2,SOURCE_3)')
+    parser.add_argument('--security.protocol', default='PLAINTEXT',
+                        help='If set, you need to pass env variables KAFKA_SASL_USERNAME, KAFKA_SASL_PASSWORD, CLIENT_ID')
     return parser.parse_args()
 
 
@@ -101,8 +105,8 @@ class TickGenerator:
         # Simulate occasional non-tradable ticks
         is_tradable = random.random() < 0.98  # 98% are tradable
 
-        # Generate a unique number (timestamp-based with some randomness)
-        number = int(now.timestamp() * 1000000) + random.randint(0, 999)
+        # # Generate a unique number (timestamp-based with some randomness)
+        # number = int(now.timestamp() * 1000000) + random.randint(0, 999)
 
         # Occasional markup
         ask_markup = 0 if random.random() < 0.9 else round(random.uniform(0.01, 0.2), 2)
@@ -117,40 +121,48 @@ class TickGenerator:
             "askMarkup": ask_markup,
             "bidMarkup": bid_markup,
             "isTradable": is_tradable,
-            "number": number,
+            # "number": number,
             "dateTime": date_time,
             "receiveDateTime": receive_date_time
         }
 
 
-def create_kafka_producer(brokers: str) -> KafkaProducer:
+def create_kafka_producer(args) -> Producer:
     """Create and return a Kafka producer instance"""
-    return KafkaProducer(
-        bootstrap_servers=brokers.split(','),
-        value_serializer=lambda v: json.dumps(v).encode('utf-8'),
-        # Additional configuration for production use
-        acks='all',
-        retries=3,
-        retry_backoff_ms=500,
-    )
+    config = {
+        'bootstrap.servers': getattr(args, 'bootstrap.servers'),
+        'security.protocol': getattr(args, 'security.protocol'),
+        'sasl.mechanisms': getattr(args, 'sasl.mechanisms'),
+        'sasl.username': getattr(args, 'sasl.username'),
+        'sasl.password': getattr(args, 'sasl.password')
+    }
+    # print(f"config = {config}")
+    producer = Producer(config)
+    return producer
 
 
 def main():
     """Main function to generate and send ticks"""
     args = parse_args()
+    if getattr(args, 'security.protocol') != 'PLAINTEXT':
+        setattr(args, 'sasl.mechanisms', 'PLAIN')
+        setattr(args, 'sasl.username', os.environ['KAFKA_SASL_USERNAME'])
+        setattr(args, 'sasl.password', os.environ['KAFKA_SASL_PASSWORD'])
+        # setattr(args, 'client_id', os.environ['CLIENT_ID'])
+
 
     symbols = args.symbols.split(',')
     sources = args.sources.split(',')
 
     generator = TickGenerator(symbols, sources)
-    producer = create_kafka_producer(args.brokers)
+    producer = create_kafka_producer(args)
 
     count = 0
     try:
         print(f"Starting to generate ticks to topic {args.topic} at {args.interval}s intervals")
         while args.count == 0 or count < args.count:
             tick = generator.generate_tick()
-            producer.send(args.topic, tick)
+            producer.produce(args.topic, value=json.dumps(tick).encode("utf-8"))
 
             # Print tick info
             print(f"Sent: {tick['symbol']} @ {tick['mid']} [{tick['source']}]")
@@ -164,7 +176,7 @@ def main():
     finally:
         # Ensure all messages are sent before exiting
         producer.flush()
-        producer.close()
+        # producer.close()
         print(f"Total ticks generated: {count}")
 
 

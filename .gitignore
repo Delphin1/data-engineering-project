@@ -7,7 +7,6 @@
 **.terraform.lock.*
 **google_credentials.json
 **logs/
-**.env
 **__pycache__/
 .history
 **/ny_taxi_postgres_data/*
@@ -16,10 +15,3 @@ serving_dir
 .venv
 tmp
 minio-data
-
-
-*.csv
-01-docker-terraform/1_terraform_gcp/keys/
-01-docker-terraform/2_docker_sql/ny_taxi_postgres_data/
-01-docker-terraform/2_docker_sql/pgadmin
-02-workflow-orchestration/data
